@@ -1,9 +1,29 @@
-# library doc string
+'''
+This module implements the functions required for 
+data processing, training, analysis of a model for credit card 
+chrun prediction
 
+Author: Hossein Mousavi
+Date: 2023-08-25
+'''
 
 # import libraries
+import logging
 import os
 os.environ['QT_QPA_PLATFORM']='offscreen'
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
+
+from sklearn.preprocessing import normalize
+from sklearn.model_selection import train_test_split
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+
+from sklearn.metrics import plot_roc_curve, classification_report
 
 
 
@@ -16,10 +36,11 @@ def import_data(pth):
     output:
             df: pandas dataframe
     '''	
-	pass
+    df = pd.read_csv(pth)
+    return df
 
 
-def perform_eda(df):
+def perform_eda(df, save_path):
     '''
     perform eda on df and save figures to images folder
     input:
@@ -28,7 +49,11 @@ def perform_eda(df):
     output:
             None
     '''
-	pass
+    df['Churn'] = df['Attrition_Flag'].apply(lambda val: 0 if val == "Existing Customer" else 1)
+    fig = plt.figure(figsize=(20,10)) 
+    df['Churn'].hist()
+    plt.savefig(os.path.join(save_path, 'churn_histogram.png'))
+    plt.close(fig)
 
 
 def encoder_helper(df, category_lst, response):
@@ -108,3 +133,22 @@ def train_models(X_train, X_test, y_train, y_test):
               None
     '''
     pass
+
+
+if __name__ == "__main__":
+    # parameters
+    data_path = 'data/bank_data.csv'
+
+    logging.basicConfig(filename="./logs/main.txt",
+                    level=logging.INFO,
+                    filemode='w',
+                    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+                    datefmt='%m/%d/%Y %I:%M:%S %p')
+    logging.info("Started")
+
+    logging.info("reading the data from {} ...".format(data_path))
+    df = import_data("./data/bank_data.csv")
+    logging.info("head of the dataframe:\n {}".format(df.head()))
+    logging.info("shape of dataframe: {}".format(df.shape))
+
+    perform_eda(df, 'images')
