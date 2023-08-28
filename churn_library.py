@@ -26,6 +26,7 @@ os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
 sns.set()
 
+
 def import_data(pth):
     '''
     returns dataframe for the csv found at pth
@@ -56,7 +57,7 @@ def add_churn_column(df):
 def perform_eda(df, save_path='images'):
     '''
     perform eda on df and save figures to images folder
-    
+
     input:
             df: pandas dataframe
             save_path: where to save the eda images. Defaults to 'image' directory
@@ -113,7 +114,8 @@ def encoder_helper(df, category_lst, response='Churn'):
     return df
 
 
-def perform_feature_engineering(df, feature_cols, response, test_size=0.3, random_state=42):
+def perform_feature_engineering(
+        df, feature_cols, response, test_size=0.3, random_state=42):
     '''
     input:
               df: pandas dataframe
@@ -202,7 +204,7 @@ def feature_importance_plot(model, X_data, output_pth):
 
 
 def train_models(X_train, X_test, y_train, y_test, rfc_param_grid, log_reg_max_iter=3000,
-                  random_state=42, scores_save_path='images', models_save_path='model'):
+                 random_state=42, scores_save_path='images', models_save_path='model'):
     '''
     train, store model results: images + scores, and store models
     input:
@@ -210,10 +212,10 @@ def train_models(X_train, X_test, y_train, y_test, rfc_param_grid, log_reg_max_i
               X_test: X testing data
               y_train: y training data
               y_test: y testing data
-              log_reg_max_iter: maximum number of iterations in logistic regression model training. 
+              log_reg_max_iter: maximum number of iterations in logistic regression model training.
                Defaults to 3000.
               rfc_param_grid: dictionay used for grid search in random forest model training
-              random_state : seed for the random generator (optional, defaults to 42)
+              random_state : seed for the random generator. Defaults to 42.
               scores_save_path: directory to save the modeling performance and scores. Defaults to
                 'images'.
               models_save_path: directory to save the trained models. Defaults to 'model'.
@@ -271,42 +273,46 @@ def train_models(X_train, X_test, y_train, y_test, rfc_param_grid, log_reg_max_i
 if __name__ == "__main__":
 
     logging.basicConfig(filename="./logs/main.txt",
-                    level=logging.INFO,
-                    filemode='w',
-                    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-                    datefmt='%m/%d/%Y %I:%M:%S %p')
+                        level=logging.INFO,
+                        filemode='w',
+                        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+                        datefmt='%m/%d/%Y %I:%M:%S %p')
     logging.info("Started")
 
-    logging.info("reading the data from {} ...".format(cnts.data_path))
-    df = import_data(cnts.data_path)
-    logging.info("head of the dataframe:\n {}".format(df.head()))
-    logging.info("shape of dataframe: {}".format(df.shape))
-    
+    logging.info("reading the data from %s ...", cnts.data_path)
+    data_df = import_data(cnts.data_path)
+    logging.info("head of the dataframe:\n %s", data_df.head())
+    logging.info("shape of dataframe: %s", data_df.shape)
+
     logging.info("'Churn' column is added to the dataframe\n")
-    df = add_churn_column(df)
+    data_df = add_churn_column(data_df)
 
     logging.info('performing eda ...')
-    perform_eda(df, 'images')
-    logging.info('results images are saved to the directory {} \n'.format(cnts.images_dir))
+    perform_eda(data_df, 'images')
+    logging.info(
+        'results images are saved to the directory %s \n', cnts.images_dir)
 
-    logging.info("The following categorical features are being encoded ....:\n {}\n".format(
-        cnts.category_lst))
-    df = encoder_helper(df, cnts.category_lst, cnts.output_column)
-    logging.info("The column names after adding the encoded columns are as follows:\n {}\n".format(
-        df.columns))
+    logging.info("The following categorical features are being encoded ....:\n %s\n",
+                 cnts.category_lst)
+    data_df = encoder_helper(data_df, cnts.category_lst, cnts.output_column)
+    logging.info("The column names after adding the encoded columns are as follows:\n %s\n",
+                 data_df.columns)
 
-    logging.info("Train/Test data are generated. \n  input features: {}\n  output feature: {}\n ".
-                 format(cnts.train_features, cnts.output_column))
-    X_train, X_test, y_train, y_test = perform_feature_engineering(df, cnts.train_features,
-                                                                    cnts.output_column,
-                                                                    cnts.test_size,
-                                                                    cnts.random_state)
-    
-    logging.info("Training the logistic regression with the log_reg_max_iter {} \n \
-                  and random forest model with the grid search \n {} \n".
-                  format(cnts.log_reg_max_iter, cnts.rfc_param_grid))
-    train_models( X_train, X_test, y_train, y_test, cnts.rfc_param_grid,
-                cnts.log_reg_max_iter, cnts.random_state,
-                cnts.images_dir, cnts.model_dir)
-    logging.info("Resutls are saved to {} \n. best models are saved to {} \n".format(
-        cnts.images_dir, cnts.model_dir))
+    logging.info("Train/Test data are generated. \n  input features: %s\n  output feature: %s\n ",
+                 cnts.train_features, cnts.output_column)
+    X_train_df, X_test_df, y_train_df, y_test_df = perform_feature_engineering(data_df,
+                                                                               cnts.train_features,
+                                                                               cnts.output_column,
+                                                                               cnts.test_size,
+                                                                               cnts.random_state)
+
+    logging.info("Training the logistic regression with the log_reg_max_iter %s \n \
+                and random forest model with the grid search \n %s \n",
+                 cnts.log_reg_max_iter, cnts.rfc_param_grid)
+    train_models(X_train_df, X_test_df, y_train_df, y_test_df, cnts.rfc_param_grid,
+                 cnts.log_reg_max_iter, cnts.random_state,
+                 cnts.images_dir, cnts.model_dir)
+    logging.info("Resutls are saved to %s \n. best models are saved to %s \n", cnts.images_dir,
+                 cnts.model_dir)
+
+    logging.info("Finished")
