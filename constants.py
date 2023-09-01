@@ -5,23 +5,23 @@ Author: Hossein Mousavi
 Date: 2023-08-25
 '''
 # random state
-random_state = 42
+RANDOM_STATE = 42
 # data path
-data_path = 'data/bank_data.csv'
+DATA_PATH = 'data/bank_data.csv'
 # eda/results performance dir
-images_dir = 'images'
+IMAGES_DIR = 'images'
 # trained models dir
-model_dir = 'model'
+MODEL_DIR = 'model'
 # Categorical variables to be converted to numerical features
 # using mean of response
-category_lst = [
+CATEGORY_LST = [
     'Gender',
     'Education_Level',
     'Marital_Status',
     'Income_Category',
     'Card_Category']
 # features used for training
-train_features = ['Customer_Age', 'Dependent_count', 'Months_on_book',
+TRAIN_FEATURES = ['Customer_Age', 'Dependent_count', 'Months_on_book',
                 'Total_Relationship_Count', 'Months_Inactive_12_mon',
                 'Contacts_Count_12_mon', 'Credit_Limit', 'Total_Revolving_Bal',
                 'Avg_Open_To_Buy', 'Total_Amt_Chng_Q4_Q1', 'Total_Trans_Amt',
@@ -29,27 +29,18 @@ train_features = ['Customer_Age', 'Dependent_count', 'Months_on_book',
                 'Gender_Churn', 'Education_Level_Churn', 'Marital_Status_Churn',
                 'Income_Category_Churn', 'Card_Category_Churn']
 # name of target column
-output_column = 'Churn'
+OUTPUT_COLUMN = 'Churn'
 # proportion of test set
-test_size = 0.3
-#max iteration in logistic regression
-
-# random forest parameters' grid
-# param_grid = {
-#     'n_estimators': [200, 500],
-#     'max_features': ['auto', 'sqrt'],
-#     'max_depth': [4, 5, 100],
-#     'criterion': ['gini', 'entropy']
-# }
+TEST_SIZE = 0.3
 ## params grid
-log_reg_param_grid = {
+LOG_REG_PARAM_GRID = {
     'max_iter': [3000]
 }
 
-rfc_param_grid = {
-    'n_estimators': [200],
-    'max_features': ['auto'],
-    'max_depth': [4],
-    'criterion': ['gini']
-    }
+RFC_PARAM_GRID = {
+    'n_estimators': [200, 500],
+    'max_features': ['auto', 'sqrt'],
+    'max_depth': [4, 5, 100],
+    'criterion': ['gini', 'entropy']
+}
 ##

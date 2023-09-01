@@ -30,7 +30,7 @@ def test_import_data():
     test import data - this example is completed for you to assist with the other test functions
     '''
     try:
-        pytest.df = cls.import_data(cnts.data_path)
+        pytest.df = cls.import_data(cnts.DATA_PATH)
     except FileNotFoundError as err:
         logging.error("Testing import_eda: The file wasn't found")
         raise err
@@ -55,7 +55,7 @@ class TestChurnDfBuilder:
         test the class constructor
         '''
         try:
-            pytest.churn_df_builder = cls.ChurnDfBuilder(cnts.data_path)
+            pytest.churn_df_builder = cls.ChurnDfBuilder(cnts.DATA_PATH)
             logging.info("Testing ChurnDfBuilder constructor: SUCCESS")
         except BaseException as err:
             logging.error("testing ChuenBuilder constructor!")
@@ -79,29 +79,29 @@ class TestChurnDfBuilder:
         test perform_eda method
         '''
         try:
-            pytest.churn_df_builder.perform_eda(cnts.images_dir)
-            assert os.path.isfile(os.path.join(cnts.images_dir, 'churn.png'))
+            pytest.churn_df_builder.perform_eda(cnts.IMAGES_DIR)
+            assert os.path.isfile(os.path.join(cnts.IMAGES_DIR, 'churn.png'))
             assert os.path.isfile(
                 os.path.join(
-                    cnts.images_dir,
+                    cnts.IMAGES_DIR,
                     'customer_age.png'))
             assert os.path.isfile(
                 os.path.join(
-                    cnts.images_dir,
+                    cnts.IMAGES_DIR,
                     'marital_status.png'))
             assert os.path.isfile(
                 os.path.join(
-                    cnts.images_dir,
+                    cnts.IMAGES_DIR,
                     'total_trans_ct.png'))
             assert os.path.isfile(
                 os.path.join(
-                    cnts.images_dir,
+                    cnts.IMAGES_DIR,
                     'correlation.png'))
             logging.info("Testing perform_eda: SUCCESS")
         except AssertionError as err:
             logging.error(
                 "Testing perform_eda: The fig does not exist in the directory %s",
-                cnts.images_dir)
+                cnts.IMAGES_DIR)
             raise err
 
     def test_encoder_helper(self):
@@ -109,9 +109,9 @@ class TestChurnDfBuilder:
         test encoder_helper method
         '''
         try:
-            pytest.churn_df_builder.encoder_helper(cnts.category_lst)
-            for feature in cnts.category_lst:
-                assert feature + '_' + cnts.output_column in pytest.churn_df_builder.get_df()\
+            pytest.churn_df_builder.encoder_helper(cnts.CATEGORY_LST)
+            for feature in cnts.CATEGORY_LST:
+                assert feature + '_' + cnts.OUTPUT_COLUMN in pytest.churn_df_builder.get_df()\
                     .columns
             logging.info("Testing encoder_helper: SUCCESS")
         except AssertionError as err:
@@ -129,8 +129,8 @@ def test_perform_feature_engineering():
         pytest.churn_df = pytest.churn_df_builder.get_df()
         pytest.X_train, pytest.X_test, pytest.y_train, pytest.y_test = \
             cls.perform_feature_engineering(
-                pytest.churn_df, cnts.train_features, cnts.output_column)
-        assert pytest.X_train.shape[0] >= cnts.test_size * \
+                pytest.churn_df, cnts.TRAIN_FEATURES, cnts.OUTPUT_COLUMN)
+        assert pytest.X_train.shape[0] >= cnts.TEST_SIZE * \
             pytest.X_test.shape[0]
         logging.info("Testing perform_feature_engineering: SUCCESS")
     except AssertionError as err:
@@ -150,9 +150,9 @@ class TestGridTrainer:
         '''
         try:
             pytest.log_reg_trainer = cls.GridTrainerFactory.logreg(
-                cnts.log_reg_param_grid)
+                cnts.LOG_REG_PARAM_GRID)
             pytest.random_forest_trainer = cls.GridTrainerFactory\
-                .randfor(cnts.rfc_param_grid, cnts.random_state)
+                .randfor(cnts.RFC_PARAM_GRID, cnts.RANDOM_STATE)
             logging.info("Testing GridTrainer constructor: SUCCESS")
         except BaseException as err:
             logging.error("Testing GridTrainer constructor: Failed!")
@@ -166,16 +166,16 @@ class TestGridTrainer:
             _, pytest.ax = plt.subplots(figsize=(15, 8))
             pytest.log_reg_trainer.train(pytest.X_train, pytest.X_test,
                                          pytest.y_train, pytest.y_test,
-                                         cnts.images_dir, cnts.model_dir, roc_ax=pytest.ax)
+                                         cnts.IMAGES_DIR, cnts.MODEL_DIR, roc_ax=pytest.ax)
             assert os.path.isfile(
                 os.path.join(
-                    cnts.images_dir,
+                    cnts.IMAGES_DIR,
                     'roc_curves.png'))
-            assert os.path.isfile(os.path.join(cnts.images_dir,
+            assert os.path.isfile(os.path.join(cnts.IMAGES_DIR,
                                                'logistic_reg_classification_reports.png'))
             assert os.path.isfile(
                 os.path.join(
-                    cnts.model_dir,
+                    cnts.MODEL_DIR,
                     'logistic_reg_model.pkl'))
             logging.info("Testing logistic regression trainer.train: SUCCESS")
         except AssertionError as err:
@@ -190,16 +190,16 @@ class TestGridTrainer:
         try:
             pytest.random_forest_trainer.train(pytest.X_train, pytest.X_test,
                                                pytest.y_train, pytest.y_test,
-                                               cnts.images_dir, cnts.model_dir, roc_ax=pytest.ax)
+                                               cnts.IMAGES_DIR, cnts.MODEL_DIR, roc_ax=pytest.ax)
             assert os.path.isfile(
                 os.path.join(
-                    cnts.images_dir,
+                    cnts.IMAGES_DIR,
                     'roc_curves.png'))
-            assert os.path.isfile(os.path.join(cnts.images_dir,
+            assert os.path.isfile(os.path.join(cnts.IMAGES_DIR,
                                                'random_forest_classification_reports.png'))
             assert os.path.isfile(
                 os.path.join(
-                    cnts.model_dir,
+                    cnts.MODEL_DIR,
                     'random_forest_model.pkl'))
             logging.info("Testing random_forest trainer.train: SUCCESS")
         except AssertionError as err:

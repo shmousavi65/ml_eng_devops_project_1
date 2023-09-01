@@ -311,8 +311,8 @@ if __name__ == "__main__":
     logging.info("Pipeline Started")
 
     # Data Preprocessing
-    logging.info("reading the data from %s ...", cnts.data_path)
-    churn_df_builder = ChurnDfBuilder(cnts.data_path)
+    logging.info("reading the data from %s ...", cnts.DATA_PATH)
+    churn_df_builder = ChurnDfBuilder(cnts.DATA_PATH)
 
     logging.info(
         "head of the dataframe:\n %s",
@@ -323,13 +323,13 @@ if __name__ == "__main__":
     churn_df_builder.add_churn_column()
 
     logging.info('performing eda ...')
-    churn_df_builder.perform_eda(cnts.images_dir)
+    churn_df_builder.perform_eda(cnts.IMAGES_DIR)
     logging.info(
-        'results images are saved to the directory %s \n', cnts.images_dir)
+        'results images are saved to the directory %s \n', cnts.IMAGES_DIR)
 
     logging.info("The following categorical features are being encoded ....:\n %s\n",
-                 cnts.category_lst)
-    churn_df_builder.encoder_helper(cnts.category_lst, cnts.output_column)
+                 cnts.CATEGORY_LST)
+    churn_df_builder.encoder_helper(cnts.CATEGORY_LST, cnts.OUTPUT_COLUMN)
     logging.info("The column names after adding the encoded columns are as follows:\n %s\n",
                  churn_df_builder.get_df().columns)
 
@@ -338,38 +338,38 @@ if __name__ == "__main__":
 
     # Generate train/test data
     logging.info("Train/Test data are generated. \n  input features: %s\n  output feature: %s\n ",
-                 cnts.train_features, cnts.output_column)
+                 cnts.TRAIN_FEATURES, cnts.OUTPUT_COLUMN)
     X_train_df, X_test_df, y_train_df, y_test_df = perform_feature_engineering(churn_df,
-                                                                               cnts.train_features,
-                                                                               cnts.output_column,
-                                                                               cnts.test_size,
-                                                                               cnts.random_state)
+                                                                               cnts.TRAIN_FEATURES,
+                                                                               cnts.OUTPUT_COLUMN,
+                                                                               cnts.TEST_SIZE,
+                                                                               cnts.RANDOM_STATE)
     ##
 
     # Train logistic regression
     figure, axis = plt.subplots(figsize=(15, 8))
     logging.info("Training the logistic regression with the grid search \n %s \n",
-                 cnts.log_reg_param_grid)
-    GridTrainerFactory.logreg(cnts.log_reg_param_grid).train(X_train_df, X_test_df,
+                 cnts.LOG_REG_PARAM_GRID)
+    GridTrainerFactory.logreg(cnts.LOG_REG_PARAM_GRID).train(X_train_df, X_test_df,
                                                              y_train_df, y_test_df,
-                                                             cnts.images_dir, cnts.model_dir,
+                                                             cnts.IMAGES_DIR, cnts.MODEL_DIR,
                                                              roc_ax=axis
                                                              )
-    logging.info("Resutls are saved to %s \n. best models are saved to %s \n", cnts.images_dir,
-                 cnts.model_dir)
+    logging.info("Resutls are saved to %s \n. best models are saved to %s \n", cnts.IMAGES_DIR,
+                 cnts.MODEL_DIR)
     ##
 
     # Train random forest
     logging.info("Training the radom forest with the grid search \n %s \n",
-                 cnts.rfc_param_grid)
+                 cnts.RFC_PARAM_GRID)
     random_forest_trainer = GridTrainerFactory.randfor(
-        cnts.rfc_param_grid, cnts.random_state)
+        cnts.RFC_PARAM_GRID, cnts.RANDOM_STATE)
     random_forest_trainer.train(X_train_df, X_test_df, y_train_df, y_test_df,
-                                cnts.images_dir, cnts.model_dir, roc_ax=axis)
+                                cnts.IMAGES_DIR, cnts.MODEL_DIR, roc_ax=axis)
     random_forest_trainer.best_model_feature_importance_plot(
-        X_train_df, cnts.images_dir)
-    logging.info("Resutls are saved to %s \n. best models are saved to %s \n", cnts.images_dir,
-                 cnts.model_dir)
+        X_train_df, cnts.IMAGES_DIR)
+    logging.info("Resutls are saved to %s \n. best models are saved to %s \n", cnts.IMAGES_DIR,
+                 cnts.MODEL_DIR)
     plt.close(figure)
     ##
 
