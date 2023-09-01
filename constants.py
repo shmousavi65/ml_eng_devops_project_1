@@ -33,7 +33,7 @@ output_column = 'Churn'
 # proportion of test set
 test_size = 0.3
 #max iteration in logistic regression
-log_reg_max_iter = 3000
+
 # random forest parameters' grid
 # param_grid = {
 #     'n_estimators': [200, 500],
@@ -41,9 +41,15 @@ log_reg_max_iter = 3000
 #     'max_depth': [4, 5, 100],
 #     'criterion': ['gini', 'entropy']
 # }
+## params grid
+log_reg_param_grid = {
+    'max_iter': [3000]
+}
+
 rfc_param_grid = {
     'n_estimators': [200],
     'max_features': ['auto'],
     'max_depth': [4],
     'criterion': ['gini']
     }
+##
