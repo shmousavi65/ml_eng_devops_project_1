@@ -18,6 +18,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import joblib
 import shap
 import constants as cnts
@@ -192,14 +193,13 @@ def classification_report_image(y_train,
     plt.close(fig)
 
 
-def tree__based_feature_importance_plot(model, X_data, model_name, save_dir):
+def shap_feature_importance_plot(model, X_data, model_name, save_dir):
     '''
-    creates and stores the feature importances in pth
+    creates and stores the shap feature importances
     input:
-            model: model object containing feature_importances_
+            model: model object
             X_data: pandas dataframe of X values
-            model_name: name of the model to be used as the name of the report to be saved. Defaults
-             to 'model'
+            model_name: name of the model to be used as the name of the report to be saved.
             save_dir: dir to store the importance plot figure
     output:
              None
@@ -213,6 +213,41 @@ def tree__based_feature_importance_plot(model, X_data, model_name, save_dir):
             save_dir,
             model_name +
             '_shap_feature_importance.png'))
+    plt.close(fig)
+
+
+def tree_model_feature_importance_plot(model, X_data, model_name, save_dir):
+    '''
+    creates and stores the inherent feature importances of the model
+    input:
+            model: model object containing feature_importances_
+            X_data: pandas dataframe of X values
+            model_name: name of the model to be used as the name of the report to be saved.
+            save_dir: dir to store the importance plot figure
+    output:
+             None
+    '''
+    # Calculate feature importances
+    importances = model.feature_importances_
+    # Sort feature importances in descending order
+    indices = np.argsort(importances)[::-1]
+    # Rearrange feature names so they match the sorted feature importances
+    names = [X_data.columns[i] for i in indices]
+    # Create plot
+    fig = plt.figure(figsize=(20, 15))
+    # Create plot title
+    plt.title("Feature Importance")
+    plt.ylabel('Importance')
+    # Add bars
+    plt.bar(range(X_data.shape[1]), importances[indices])
+    # Add feature names as x-axis labels
+    plt.xticks(range(X_data.shape[1]), names, rotation=90)
+    # save
+    plt.savefig(
+        os.path.join(
+            save_dir,
+            model_name +
+            '_self_feature_importance.png'))
     plt.close(fig)
 
 
@@ -264,6 +299,18 @@ class GridTrainer:
                                     y_test_preds,
                                     self.model_name,
                                     scores_save_dir)
+
+        # plot model roc curve on a single image
+        fig, ax = plt.subplots(figsize=(15, 8))
+        plot_roc_curve(self.best_model, X_test, y_test, ax=ax)
+        fig.savefig(
+            os.path.join(
+                scores_save_dir,
+                self.model_name +
+                '_roc_curves.png'))
+        plt.close(fig)
+
+        # plot model roc curve on the input axis too
         if roc_ax is None:
             fig, ax = plt.subplots(figsize=(15, 8))
         else:
@@ -272,11 +319,19 @@ class GridTrainer:
         fig = ax.get_figure()
         fig.savefig(os.path.join(scores_save_dir, 'roc_curves.png'))
 
-    def best_model_feature_importance_plot(self, X, save_dir='images'):
+    def best_model_shap_feature_importance_plot(self, X, save_dir='images'):
         '''
-        find and save the shap feature importance
+        find and save the shap feature importance of the best found model
         '''
-        tree__based_feature_importance_plot(
+        shap_feature_importance_plot(
+            self.best_model, X, self.model_name, save_dir)
+
+    def best_model_self_feature_importance_plot(self, X, save_dir='images'):
+        '''
+        find and save the shap feature importance of the best found model.
+        The model should contain feature_importances_ method.
+        '''
+        tree_model_feature_importance_plot(
             self.best_model, X, self.model_name, save_dir)
 
 
@@ -366,7 +421,9 @@ if __name__ == "__main__":
         cnts.RFC_PARAM_GRID, cnts.RANDOM_STATE)
     random_forest_trainer.train(X_train_df, X_test_df, y_train_df, y_test_df,
                                 cnts.IMAGES_DIR, cnts.MODEL_DIR, roc_ax=axis)
-    random_forest_trainer.best_model_feature_importance_plot(
+    random_forest_trainer.best_model_shap_feature_importance_plot(
+        X_train_df, cnts.IMAGES_DIR)
+    random_forest_trainer.best_model_self_feature_importance_plot(
         X_train_df, cnts.IMAGES_DIR)
     logging.info("Resutls are saved to %s \n. best models are saved to %s \n", cnts.IMAGES_DIR,
                  cnts.MODEL_DIR)

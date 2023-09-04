@@ -170,6 +170,10 @@ class TestGridTrainer:
             assert os.path.isfile(
                 os.path.join(
                     cnts.IMAGES_DIR,
+                    'logistic_reg_roc_curves.png'))
+            assert os.path.isfile(
+                os.path.join(
+                    cnts.IMAGES_DIR,
                     'roc_curves.png'))
             assert os.path.isfile(os.path.join(cnts.IMAGES_DIR,
                                                'logistic_reg_classification_reports.png'))
@@ -191,6 +195,10 @@ class TestGridTrainer:
             pytest.random_forest_trainer.train(pytest.X_train, pytest.X_test,
                                                pytest.y_train, pytest.y_test,
                                                cnts.IMAGES_DIR, cnts.MODEL_DIR, roc_ax=pytest.ax)
+            assert os.path.isfile(
+                os.path.join(
+                    cnts.IMAGES_DIR,
+                    'random_forest_roc_curves.png'))
             assert os.path.isfile(
                 os.path.join(
                     cnts.IMAGES_DIR,
