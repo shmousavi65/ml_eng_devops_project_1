@@ -195,6 +195,11 @@ class TestGridTrainer:
             pytest.random_forest_trainer.train(pytest.X_train, pytest.X_test,
                                                pytest.y_train, pytest.y_test,
                                                cnts.IMAGES_DIR, cnts.MODEL_DIR, roc_ax=pytest.ax)
+
+            pytest.random_forest_trainer.best_model_shap_feature_importance_plot(
+                pytest.X_train, cnts.IMAGES_DIR)
+            pytest.random_forest_trainer.best_model_self_feature_importance_plot(
+                pytest.X_train, cnts.IMAGES_DIR)
             assert os.path.isfile(
                 os.path.join(
                     cnts.IMAGES_DIR,
@@ -209,6 +214,10 @@ class TestGridTrainer:
                 os.path.join(
                     cnts.MODEL_DIR,
                     'random_forest_model.pkl'))
+            assert os.path.isfile(os.path.join(cnts.IMAGES_DIR,
+                                               'random_forest_self_feature_importance.png'))
+            assert os.path.isfile(os.path.join(cnts.IMAGES_DIR,
+                                               'random_forest_shap_feature_importance.png'))
             logging.info("Testing random_forest trainer.train: SUCCESS")
         except AssertionError as err:
             logging.error(
