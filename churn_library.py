@@ -206,9 +206,10 @@ def shap_feature_importance_plot(model, X_data, model_name, save_dir):
     '''
     explainer = shap.TreeExplainer(model)
     shap_values = explainer.shap_values(X_data)
-    fig = plt.figure(figsize=(20, 10))
+    fig, ax = plt.subplots(figsize=(20, 10))
+    plt.sca(ax)
     shap.summary_plot(shap_values, X_data, plot_type="bar")
-    plt.savefig(
+    fig.savefig(
         os.path.join(
             save_dir,
             model_name +
